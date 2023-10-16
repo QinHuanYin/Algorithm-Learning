@@ -1,8 +1,8 @@
 package learning1;
 
 public class Pair {
-    private int key;
-    private String val;
+    public int key;
+    public String val;
 
     public Pair() {
 
