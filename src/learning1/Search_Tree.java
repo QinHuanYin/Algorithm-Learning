@@ -78,11 +78,14 @@ public class Search_Tree {
             TreeNode child = cur.left != null ? cur.left : cur.right;
             // 如果不为根节点
             if (cur != root) {
-                if (pre.left == cur) {
+                /*if (pre.left == cur) {
                     pre.left = child;
                 } else if (pre.right == cur) {
                     pre.right = child;
-                }
+                }*/
+                // 这样写是否也可以呢？
+                if (child == null) return;
+                else cur = child;
             }
             if (cur == root) {
                 root = child;
