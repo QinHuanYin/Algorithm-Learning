@@ -59,18 +59,16 @@ public class GraphAdjList {
             throw new Error("该顶点不存在");
         }
         adjList.remove(num);
-        // 同时还要把其他定点上与之相连的边删掉
-        for (int i = 0; i < size(); i++) {
-            adjList.get(i).remove(num);
+        // 同时还要把其他顶点上与之相连的边删掉
+        for (List<Vertex> list : adjList.values()) {
+            list.remove(num);
         }
     }
 
     public void printf() {
         List<Vertex> tempList = new ArrayList<>();
         for (Map.Entry<Vertex, List<Vertex>> temp: adjList.entrySet()) {
-            for (Vertex tempVertex : temp.getValue()) {
-                tempList.add(tempVertex);
-            }
+            tempList.addAll(temp.getValue());
             System.out.println(temp.getKey() + ":" + tempList + ",");
         }
     }
