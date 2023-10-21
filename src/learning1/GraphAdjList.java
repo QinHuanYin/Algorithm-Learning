@@ -1,93 +1,77 @@
 package learning1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GraphAdjList {
-    List<Integer> vertices = new ArrayList<>();
-    List<List<Integer>> adjMat = new ArrayList<>();
+    Map<Vertex, List<Vertex>> adjList = new HashMap<>();
 
-    // 传两个参数构建，一个用于构建参数列表的arr，一个用于构建边的集合edges
-    public GraphAdjList(int[] arr, int[][] edges) {
-        // 把传来的数组arr中的值传进给vertices
-        for (int i : arr) {
-            vertices.add(i);
-        }
-
-        // 构建邻接矩阵，添加顶点
-        for (int i : arr) {
-            addVertices(i);
-        }
-
-        // 构建邻接矩阵，添加边
-        // 这里我有一点不是很明白，就是为什么它只给添加了e[0]和e[1]两个值
-        // 作为难道2和之后的都不要了吗
-        // 唯一一种我能想到的解释就是其是一个n行两列的数组
-        for (int[] e : edges) {
-            addEdges(e[0], e[1]);
+    // 添加所有的顶点和边
+    // 实际上这里的传值还是顶点
+    public GraphAdjList (Vertex[][] vertex) {
+        for (Vertex[] v : vertex) {
+            addVertex(v[0]);
+            addVertex(v[1]);
+            addEdges(v[0], v[1]);
         }
     }
 
-
-    // 返回列表的数量
-    public int size (List list) {
-        return list.size();
+    // 获取实际长度
+    public int size() {
+        return adjList.size();
     }
 
-    int n = size(vertices);
-
-    // 添加顶点，首先添加的元素全都是0
-    public void addVertices(int val) {
-        // 先添加行
-        List<Integer> newList = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) {
-            newList.add(0);
+    // 添加顶点
+    public void addVertex(Vertex num) {
+        // 如果已经有了这个顶点了
+        if (adjList.containsKey(num)) {
+            return;
         }
-
-        // 再添加列，注意这里的逻辑，是在每一行的最后添加0
-        for (List<Integer> list : adjMat) {
-            list.add(0);
-        }
+        adjList.put(num, new ArrayList<>());
     }
 
-    // 添加边，其核心逻辑就是让两边的值为1
-    public void addEdges(int i, int j) {
-        // 首先对i、j的索引边界进行判断
-        // 如果其超出了边界就抛出错误
-        if (i < 0 || j < 0 || j >= n || j >= n || i == j) {
-            throw new IndexOutOfBoundsException("超出边界");
+    // 添加边
+    public void addEdges(Vertex i, Vertex j) {
+        // 首先要判断这两条边是否存在
+        if (!adjList.containsKey(i) || !adjList.containsKey(j) || i == j) {
+            throw new Error("边不存在或者边相等");
         }
-        adjMat.get(i).set(j, 1);
-        adjMat.get(j).set(i, 1);
-    }
-
-    // 删除顶点，这里是根据vertices的索引进行删除的
-    public void deleteVertices (int index) {
-        // 如果超出了范围就报错
-        if (index >= n || index < 0) {
-            throw new IndexOutOfBoundsException("该索引不存在");
-        }
-
-        // 顶点表中进行删除
-        vertices.remove(index);
-
-        // 先是在adjMat中删除这一行
-        adjMat.remove(index);
-
-        // 然后在所有行中，依次删除该列的值
-        for (List<Integer> list : adjMat) {
-            list.remove(index);
-        }
+        adjList.get(i).add(j);
+        adjList.get(j).add(i);
     }
 
     // 删除边
-    public void deleteEdges (int i, int j) {
-        // 首先对i、j的索引边界进行判断
-        // 如果其超出了边界就抛出错误
-        if (i < 0 || j < 0 || j >= n || j >= n || i == j) {
-            throw new IndexOutOfBoundsException("超出边界");
+    public void deleteEdges(Vertex i, Vertex j) {
+        // 首先要判断这两条边是否存在
+        if (!adjList.containsKey(i) || !adjList.containsKey(j) || i == j) {
+            throw new Error("边不存在或者边相等");
         }
-        adjMat.get(i).set(j, 0);
-        adjMat.get(j).set(i, 0);
+        adjList.get(i).remove(j);
+        adjList.get(j).remove(i);
+    }
+
+    // 删除顶点
+    public void deleteVertex(Vertex num) {
+        // 如果没有这个顶点
+        if (!adjList.containsKey(num)) {
+            throw new Error("该顶点不存在");
+        }
+        adjList.remove(num);
+        // 同时还要把其他定点上与之相连的边删掉
+        for (int i = 0; i < size(); i++) {
+            adjList.get(i).remove(num);
+        }
+    }
+
+    public void printf() {
+        List<Vertex> tempList = new ArrayList<>();
+        for (Map.Entry<Vertex, List<Vertex>> temp: adjList.entrySet()) {
+            for (Vertex tempVertex : temp.getValue()) {
+                tempList.add(tempVertex);
+            }
+            System.out.println(temp.getKey() + ":" + tempList + ",");
+        }
     }
 }
