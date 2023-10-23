@@ -1,5 +1,7 @@
 package learning1;
 
+import java.util.Arrays;
+
 public class AllSort {
     /**
      * 选择排序
@@ -104,13 +106,13 @@ public class AllSort {
 
     // 将哨兵挪到正确的位置，也就是左边的都小于哨兵，右边的都大于哨兵
     // 返回哨兵的索引，方便递归调用
-    public int partition(int[] arr, int left, int right){
+    public int partition(int[] arr, int left, int right) {
         int mid = medianThree(arr, left, right, (left + right) / 2);
         // 先将哨兵和最左边的数进行一个交换
         // 注意这里是索引，所以不存在mid不在的情况
         swap(arr, mid, left);
         int i = left, j = right;
-        while(i < j) {
+        while (i < j) {
             // 循环找，一直找到大于哨兵的点为止
             while (arr[i] <= arr[left] && i < j) {
                 i++;
@@ -138,5 +140,97 @@ public class AllSort {
         quickSort(arr, mid + 1, right);
         quickSort(arr, left, mid - 1);
     }
+
+    /**
+     * 归并排序
+     * 其思路和快速排序的思路差不多
+     * 也就是分开的一个思想
+     * 它是将左右两边的进行分开
+     * 然后一步步递归达到左右两边都符合排序的规则
+     * 然后再进行合并
+     * 如同我们知道的那样，它合并的规则是先合并左边再右边再合并处理
+     * 符合左右根的遍历次序
+     * 也就是后序遍历
+     */
+    public void merge(int[] arr, int left, int right, int mid) {
+        // 先创建辅助数组
+        int[] arrTemp = Arrays.copyOfRange(arr, left, right + 1);
+        int leftStart = left - left, leftEnd = mid - left;
+        int rightStart = mid + 1 - left, rightEnd = right - left;
+        int i = leftStart, j = rightStart;
+        // 安排指针k，一步步来填充重新排序后的数组
+        for (int k = left; k <= right; k++) {
+            // 当左边的全部合并之后，就开始合并右边的了
+            if (i > leftEnd) {
+                arr[k] = arr[j++];
+            }
+            // 当右边的全部合并之后，就开始合并左边的
+            // 或者还有一种情况，就是左边的小于右边的
+            else if (j > rightEnd || arr[i] < arr[j]) {
+                arr[k] = arr[i++];
+            }
+            // 剩下的一种情况就是左边的大于右边的，合并右边的
+            else arr[k] = arr[j++];
+        }
+    }
+
+    public void mergeSort(int[] nums, int left, int right) {
+        // 当数组长度为1时
+        if (left >= right) {
+            return;
+        }
+        int mid = (left + right) / 2;
+        mergeSort(nums, mid, right);
+        mergeSort(nums, mid + 1, right);
+        merge(nums, left, right, mid);
+    }
+
+    /**
+     * 堆排序
+     * 其核心思想是堆自上而下的堆化操作
+     * 首先对传进来的数组进行堆化处理
+     * 然后将最右子节点和顶节点相交换
+     * 这样最大的那个节点就会出去放在最末尾
+     * 这样也就会有排序的功能
+     * 请注意建堆的时间复杂度为O(n)，详情见k神堆那一章
+     * 而最大的节点还在数组中，只是放在了最右子节点的位置
+     */
+    public void siftDown(int[] nums, int n, int i) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int ma = i;
+        int temp;
+        while (true) {
+            if (nums[left] > nums[ma] && left < n) {
+                ma = left;
+            } else if (nums[right] > nums[ma] && right < n) {
+                ma = right;
+            }
+            temp = nums[left];
+            nums[left] = nums[ma];
+            nums[ma] = temp;
+            if (ma == i) return;
+            i = ma;
+        }
+    }
+
+    public void heapSort(int[] nums) {
+        // 建堆操作
+        for (int i = (nums.length - 1) / 2; i >= 0; i--) {
+            siftDown(nums, nums.length, i);
+        }
+
+        // 循环提取最大的元素
+        // 第一个元素无需处理，因为已经排序好了
+        for (int i = nums.length - 1; i > 0; i--) {
+            // 交换堆顶和堆底的元素
+            int temp = nums[i];
+            nums[i] = nums[0];
+            nums[0] = temp;
+            // 每一次数组都会减少，所以长度就是i
+            siftDown(nums, i, 0);
+        }
+    }
+
 
 }
