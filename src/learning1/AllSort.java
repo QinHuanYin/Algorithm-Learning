@@ -1,6 +1,6 @@
 package learning1;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class AllSort {
     /**
@@ -232,5 +232,43 @@ public class AllSort {
         }
     }
 
+    /**
+     * 桶排序
+     * 桶排序的核心是输入对应数组后
+     * 对每一个数据进行相应的映射操作
+     * 然后内部再采用算法排序
+     * 最后再将桶中的每一个元素储存起来
+     */
+    public void bucketSort(float[] nums) {
+        // 每一个桶中存放两个元素，有个k个桶
+        int k = nums.length / 2;
+        // 创建列表
+        List<List<Float>> list = new ArrayList<>();
+        // 对每一个元素进行映射，让其映射的范围是[0, k - 1]
+        // 因为f的范围是[0, 1)，相乘之后最大也就是逼近于k
+        // 但此时取整，所以是最大时k-1
+        for (float f : nums) {
+            int i = (int) f * k;
+            list.get(i).add(f);
+        }
 
+        // 桶内排序
+        for (List<Float> lists : list) {
+            // 建议还是用Collection.sort方法
+            lists.sort(new Comparator<Float>() {
+                @Override
+                public int compare(Float o1, Float o2) {
+                    return Float.compare(o1, o2);
+                }
+            });
+        }
+
+        // 遍历桶
+        int i = 0;
+        for (List<Float> lists : list) {
+            for (float f : lists) {
+                nums[i++] = f;
+            }
+        }
+    }
 }
