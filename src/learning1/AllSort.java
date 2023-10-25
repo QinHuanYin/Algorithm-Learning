@@ -271,4 +271,51 @@ public class AllSort {
             }
         }
     }
+
+    /**
+     * 计数排序
+     * 采用前缀和的优化版本
+     * 想一想，比如1+5+7
+     * 那减去-1，最后一位是不是最后一个7所在的索引（数组的索引是从0开始的）
+     * 然后就进行循环排序
+     */
+    public void countingSort(int[] nums) {
+        // 首先要找出这个数组中最大的数，方便开一个辅助数组存放
+        // 这个排序算法不能有负数，因为数组没有负索引
+        int max = 0;
+        for (int i : nums) {
+            max = Math.max(max, i);
+        }
+
+        // 创建一个前缀和数组
+        // 要注意0也有一个索引位置，所以要+1
+        int[] counter = new int[max + 1];
+        // 将每一个数字放进counter数组中，先统计该数字出现了多少次
+        for (int i : nums) {
+            counter[i] += 1;
+        }
+        // 前缀和
+        // 要注意这里的i结束条件是小于等于max
+        // 因为counter数组是根据max的大小来创建的
+        // 而max作为nums的一部分，必须要保证counter中有max的一个位置
+        for (int i = 1; i <= max; i++) {
+            counter[i] = counter[i] + counter[i - 1];
+        }
+
+        // 前缀和-1就是该数字出现在排序好的数组的最后一个位置
+        int[] res = new int[nums.length];
+        // 循环放入数组
+        for (int i = nums.length - 1; i >= 0; i--) {
+            int num = nums[i];
+            res[counter[num] - 1] = num;
+            // counter[num]还要--，因为还有相同的元素在这里，要给他们留出位置
+            counter[num]--;
+        }
+
+        // 用res覆盖原数组
+        for (int i = 0; i < res.length; i++) {
+            nums[i] = res[i];
+        }
+    }
+
 }
