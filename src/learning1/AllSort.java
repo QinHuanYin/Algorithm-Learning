@@ -318,4 +318,57 @@ public class AllSort {
         }
     }
 
+    /**
+     * 基数排序
+     * 基数排序的核心思路是
+     * 从最低位开始，将每一位进行一个排序，从最低到最高进行一个递推
+     * 因为在排序的实际情况中，高位的大小直接影响地位的大小
+     * 整个核心还是之前所写的计数排序
+     */
+    // 返回最高位的值，exp为10的根据为此的平方
+    public int digit (int num, int exp) {
+        return (num / exp) % 10;
+    }
+
+    public void countingSortDigit (int[] nums, int exp) {
+        // 创建一个新的辅助数组
+        int[] counter = new int[0];
+        // 统计每一个数字出现了多少次
+        for(int i : nums) {
+            int k = digit(i, exp);
+            counter[k]++;
+        }
+
+        // 创建前缀和数组
+        for (int i = 1; i < 10; i++) {
+            counter[i] += counter[i - 1];
+        }
+
+        // 按照统计的规律放入新数组中
+        int[] res = new int[nums.length];
+        for (int i = nums.length - 1; i >= 0; i++) {
+            int num = nums[i];
+            res[counter[num] - 1] = num;
+            counter[num]--;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = res[i];
+        }
+    }
+
+    public void radixSort(int[] nums) {
+        // 选出里面最大的数，方便决定最高位次是多少
+        // 比如说最大值是1234，那么位次最大的就是4
+        int max = Integer.MIN_VALUE;
+        for (int i : nums) {
+            if (max < i) {
+                max = i;
+            }
+        }
+        for (int exp = 1; exp <= max; exp *= 10) {
+            countingSortDigit(nums, exp);
+        }
+    }
+
 }
