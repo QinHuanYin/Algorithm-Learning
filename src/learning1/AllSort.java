@@ -114,11 +114,11 @@ public class AllSort {
         int i = left, j = right;
         while (i < j) {
             // 循环找，一直找到大于哨兵的点为止
-            while (arr[i] <= arr[left] && i < j) {
-                i++;
-            }
             while (arr[j] >= arr[left] && i < j) {
                 j--;
+            }
+            while (arr[i] <= arr[left] && i < j) {
+                i++;
             }
             swap(arr, i, j);
         }
